@@ -12,7 +12,7 @@ import sys
 import numpy as np
 import random
 from PIL import Image
-import rsa
+from rsa import *
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -42,7 +42,7 @@ def Encode(src, message, dest, option, publicKey=None):
         else:
             num_random = random.sample(range(6, 9), 2)
         if option == '2' or option == '3':
-            b_message = rsa.encrypt(message2.encode(), publicKey)
+            b_message = encrypt(message2.encode(), publicKey)
             b_message = str(b_message) + "$t3g0"
             b_message = ''.join([format(ord(i), "08b") for i in b_message])
             req_pixels = len(str(b_message))
@@ -89,7 +89,7 @@ def Decode(src, option, privateKey):
     if "$t3g0" in message:
         if option == '2' or option == '3':
             privateKey = eval(privateKey)
-            message = rsa.decrypt( ast.literal_eval(message[:-5]), privateKey).decode()
+            message = decrypt( ast.literal_eval(message[:-5]), privateKey).decode()
             print("Hidden Message:", message)
         else:
             print("Hidden Message:", message[:-5])
@@ -99,29 +99,22 @@ def Decode(src, option, privateKey):
 
 if __name__ == "__main__":
 
-    choice = input("""Enter your choice option:
-     1 Encode.
-     2 Decode.
-    """)
+    choice = input("""Enter your choice option:\n1 Encode.\n2 Decode.""")
 
     if choice == '1':
-        option = input("""Enter your choice what you prefer: 
-  1 hide message in two bits from five.
-  2 RSA encryption and hide message in two bits from four.
-  3 both 1+2 options
-""")
+        option = input("""Enter your choice what you prefer:\n1 hide message in two bits from five.\n2 RSA encryption and hide message in two bits from four.\n3 both 1+2 options""")
 
         if option != '1' and option != '2' and option != '3':
             print("error!!! Invalid option chosen")
             exit(1)
 
-        src = input("Please enter the name of image (including type, inside your project folder):")
-        message = input("Please enter the message that you want to hide:")
-        dest = input("enter the new name picture after the encoding")
+        src = input("Please enter the name of image (including type, inside your project folder): ")
+        message = input("Please enter the message that you want to hide: ")
+        dest = input("enter the new name picture after the encoding: ")
         dest = dest + ".png"
         print("Encoding...")
         if option != '1':
-            publicKey, privateKey = rsa.newkeys(512)
+            publicKey, privateKey = newkeys(512)
             print("This is your private key:\n" + privateKey.__repr__() + "\nPlease save it for decoding")
             Encode(src, message, dest, option, publicKey)
         else:
@@ -129,9 +122,7 @@ if __name__ == "__main__":
 
 
     elif choice == '2':
-        option = input("""Enter your choice what you prefer: 
-    1 message hid without RSA.
-    2 message hid with RSA.\n""")
+        option = input("""Enter your choice what you prefer:\n1 message hid without RSA.\n2 message hid with RSA.\n""")
         if option != '1' and option != '2':
             print("error!!! Invalid option chosen")
             exit(1)
